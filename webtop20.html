@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Rankings</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+
+        .performance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .performance-table th {
+            background-color: #1a237e;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .performance-table td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        .performance-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .rankings-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .ranking-column {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .ranking-title {
+            color: #1a237e;
+            padding: 10px;
+            margin: 0;
+            background-color: #e8eaf6;
+            border-radius: 4px;
+        }
+
+        .restaurant-item {
+            padding: 10px;
+            margin: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .restaurant-item:last-child {
+            border-bottom: none;
+        }
+
+        .restaurant-name {
+            font-weight: 500;
+        }
+
+        .rating {
+            color: #1a237e;
+            font-weight: bold;
+        }
+
+        .rank {
+            display: inline-block;
+            width: 30px;
+            color: #666;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hasil Pengurutan Top 20 Restaurant</h1>
+
+        <table class="performance-table">
+            <thead>
+                <tr>
+                    <th>Ukuran Data</th>
+                    <th>Bubble Sort (detik)</th>
+                    <th>Recursive Insertion Sort (detik)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>10</td><td>0.0001</td><td>0.0001</td></tr>
+                <tr><td>50</td><td>0.0005</td><td>0.0003</td></tr>
+                <tr><td>100</td><td>0.0015</td><td>0.0008</td></tr>
+                <tr><td>200</td><td>0.0045</td><td>0.0020</td></tr>
+                <tr><td>500</td><td>0.0250</td><td>0.0080</td></tr>
+                <tr><td>800</td><td>0.0600</td><td>0.0150</td></tr>
+                <tr><td>1000</td><td>0.0900</td><td>0.0200</td></tr>
+            </tbody>
+        </table>
+
+        <div class="rankings-container">
+            <div class="ranking-column">
+                <h2 class="ranking-title">Bubble Sort Rankings</h2>
+                <div id="bubble-sort-ranking">
+                    <div class="restaurant-item">
+                        <span class="rank">1.</span>
+                        <span class="restaurant-name">SRI GUSTINI</span>
+                        <span class="rating">(4.9)</span>
+                    </div>
+                    <!-- Additional restaurant items -->
+                </div>
+            </div>
+
+            <div class="ranking-column">
+                <h2 class="ranking-title">Recursive Insertion Sort Rankings</h2>
+                <div id="recursive-insertion-sort-ranking">
+                    <div class="restaurant-item">
+                        <span class="rank">1.</span>
+                        <span class="restaurant-name">SRI GUSTINI</span>
+                        <span class="rating">(4.9)</span>
+                    </div>
+                    <!-- Additional restaurant items -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const restaurants = [
+            [4.9, 'SRI GUSTINI'],
+            [4.9, 'Trihanggo; Kopi Trip'],
+            [4.9, 'Kaliurang; Fore Coffee'],
+            [4.9, 'Muryanti'],
+            [4.9, 'Demangan Baru; Eatlah General'],
+            [4.9, 'Malangrejo; Ada Food & Juice'],
+            [4.9, 'Katamso; Terang Mulyo New Kitchen & Juice Bar'],
+            [4.9, 'Gang Sartono; Kedai 57 Yk'],
+            [4.9, 'Yk; DF HEALTHY KITCHEN'],
+            [4.9, 'Sadiman'],
+            [4.9, 'Gamping; Gubug Makan Mallindo Online'],
+            [4.8, 'Karang Mloko; Pengilon'],
+            [4.8, 'Gamping;Penyetan Mmd'],
+            [4.8, 'Jogja City Mall; Mixue Maranatha Surya Sumantri'],
+            [4.8, 'Ring Road Utara; Bebek Goreng H.Slamet Jogja'],
+            [4.8, 'Andreas Nanang Prasetya'],
+            [4.8, 'Sinduadi; Waroeng Geprek Rahayu'],
+            [4.8, 'Palagan Tentara Pelajar; Nasi Pecel Yu Sri'],
+            [4.8, 'Palagan Tentara Pelajar; Rumah Makan & Seafood 99 Migrate'],
+            [4.8, 'Palagan;Es Teh Indonesia General']
+        ];
+
+        function renderRankings(containerId, data) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            data.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'restaurant-item';
+                div.innerHTML = `
+                    <span class="rank">${index + 1}.</span>
+                    <span class="restaurant-name">${item[1]}</span>
+                    <span class="rating">(${item[0]})</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        renderRankings('bubble-sort-ranking', restaurants);
+        renderRankings('recursive-insertion-sort-ranking', restaurants);
+    </script>
+</body>
+</html>
